@@ -4,7 +4,7 @@
  * Plugin Name: EDD Customers Widget
  * Description: Show new customers for the period on the EDD summary widget.
  * Plugin URI: https://verygoodplugins.com/
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Very Good Plugins
  * Author URI: https://verygoodplugins.com/
 */
@@ -140,13 +140,13 @@ class EDD_Customers_Widget {
 					<tr>
 						<td class="first t"><?php _e( 'This Year' ); ?></td>
 						<td class="b" style="white-space: nowrap;">
-							<?php echo $data['ytd'] ?>  <small style="color: <?php echo $this->color( $data['yoy_change'] ); ?>">( <?php echo $data['yoy_change']; ?>% )</small>
+							<?php esc_html_e( $data['ytd'] ); ?>  <small style="color: <?php echo esc_attr( $this->color( $data['yoy_change'] ) ); ?>">( <?php esc_html_e( $data['yoy_change'] ); ?>% )</small>
 						</td>
 					</tr>
 					<tr>
 						<td class="first t"><?php _e( 'This Month' ); ?></td>
 						<td class="b" style="white-space: nowrap;">
-							<?php echo $data['mtd']; ?> <small style="color: <?php echo $this->color( $data['mtd_change'] ); ?>">( <?php echo $data['mtd_change']; ?>% )</small>
+							<?php esc_html_e( $data['mtd'] ); ?> <small style="color: <?php echo esc_attr( $this->color( $data['mtd_change'] ) ); ?>">( <?php esc_html_e( $data['mtd_change'] ); ?>% )</small>
 						</td>
 					</tr>
 				</tbody>
@@ -157,12 +157,13 @@ class EDD_Customers_Widget {
 	}
 
 	/**
-	 * Get the text color based on the text value
+	 * Get the text color based on the text value.
 	 *
 	 * @since  1.0.0
-	 * @return void
+	 *
+	 * @param  string $value  The value.
+	 * @return string The color.
 	 */
-
 	private function color( $value ) {
 
 		if ( 0 === strpos( $value, '+' ) ) {
@@ -174,5 +175,5 @@ class EDD_Customers_Widget {
 	}
 
 }
-$widget = new EDD_Customers_Widget;
+$widget = new EDD_Customers_Widget();
 unset( $widget );
