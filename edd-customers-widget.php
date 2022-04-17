@@ -4,7 +4,7 @@
  * Plugin Name: EDD Customers Widget
  * Description: Show new customers for the period on the EDD summary widget.
  * Plugin URI: https://verygoodplugins.com/
- * Version: 1.0
+ * Version: 1.0.1
  * Author: Very Good Plugins
  * Author URI: https://verygoodplugins.com/
 */
@@ -42,7 +42,7 @@ class EDD_Customers_Widget {
 		$data = get_transient( 'edd_customers_stats' );
 
 		// No transient.
-		//if ( false === $data ) {
+		if ( false === $data ) {
 
 			$args = array(
 				'number'     => -1,
@@ -126,7 +126,7 @@ class EDD_Customers_Widget {
 
 			set_transient( 'edd_customers_stats', $data, HOUR_IN_SECONDS );
 
-		//}
+		}
 
 		?>
 		<div class="table table_left table_current_month">
