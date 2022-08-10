@@ -4,7 +4,7 @@
  * Plugin Name: EDD Customers Widget
  * Description: Show new customers for the period on the EDD summary widget.
  * Plugin URI: https://verygoodplugins.com/
- * Version: 1.0.2
+ * Version: 1.1
  * Author: Very Good Plugins
  * Author URI: https://verygoodplugins.com/
 */
@@ -117,11 +117,39 @@ class EDD_Customers_Widget {
 				$mtd_change = '+' . $mtd_change;
 			}
 
+			$args = array(
+				'number'     => -1,
+				'date_query' => array(
+					'inclusive' => true,
+					'after'     => array(
+						'year'  => date( 'Y' ) - 1,
+						'month' => date( 'n' ),
+						'day'   => 1,
+					),
+					'before'    => array(
+						'year'  => date( 'Y' ) - 1,
+						'month' => date( 'n' ),
+						'day'   => date( 'd' ),
+					),
+				),
+			);
+
+			$this_month_last_year_customers = new EDD_Customer_Query( $args );
+
+			$mtdyoy_change = ( count( $this_month_customers->items ) - count( $this_month_last_year_customers->items ) ) / count( $this_month_last_year_customers->items ) * 100;
+
+			$mtdyoy_change = round( $mtdyoy_change, 1 );
+
+			if ( 0 < $mtdyoy_change ) {
+				$mtdyoy_change = '+' . $mtdyoy_change;
+			}
+
 			$data = array(
-				'ytd'        => count( $this_year_customers->items ),
-				'mtd'        => count( $this_month_customers->items ),
-				'yoy_change' => $yoy_change,
-				'mtd_change' => $mtd_change,
+				'ytd'           => count( $this_year_customers->items ),
+				'mtd'           => count( $this_month_customers->items ),
+				'yoy_change'    => $yoy_change,
+				'mtd_change'    => $mtd_change,
+				'mtdyoy_change' => $mtdyoy_change,
 			);
 
 			set_transient( 'edd_customers_stats', $data, HOUR_IN_SECONDS );
@@ -140,13 +168,19 @@ class EDD_Customers_Widget {
 					<tr>
 						<td class="first t"><?php _e( 'This Year' ); ?></td>
 						<td class="b" style="white-space: nowrap;">
-							<?php esc_html_e( $data['ytd'] ); ?>  <small style="color: <?php echo esc_attr( $this->color( $data['yoy_change'] ) ); ?>">( <?php esc_html_e( $data['yoy_change'] ); ?>% )</small>
+							<?php echo $data['ytd'] ?>  <small style="color: <?php echo $this->color( $data['yoy_change'] ); ?>">( <?php echo $data['yoy_change']; ?>% )</small>
 						</td>
 					</tr>
 					<tr>
-						<td class="first t"><?php _e( 'This Month' ); ?></td>
+						<td class="first t"><?php _e( 'This Month (mtd)' ); ?></td>
 						<td class="b" style="white-space: nowrap;">
-							<?php esc_html_e( $data['mtd'] ); ?> <small style="color: <?php echo esc_attr( $this->color( $data['mtd_change'] ) ); ?>">( <?php esc_html_e( $data['mtd_change'] ); ?>% )</small>
+							<?php echo $data['mtd']; ?> <small style="color: <?php echo $this->color( $data['mtd_change'] ); ?>">( <?php echo $data['mtd_change']; ?>% )</small>
+						</td>
+					</tr>
+					<tr>
+						<td class="first t"><?php _e( 'This Month (yoy)' ); ?></td>
+						<td class="b" style="white-space: nowrap;">
+							<?php echo $data['mtd']; ?> <small style="color: <?php echo $this->color( $data['mtdyoy_change'] ); ?>">( <?php echo $data['mtdyoy_change']; ?>% )</small>
 						</td>
 					</tr>
 				</tbody>
@@ -157,13 +191,12 @@ class EDD_Customers_Widget {
 	}
 
 	/**
-	 * Get the text color based on the text value.
+	 * Get the text color based on the text value
 	 *
 	 * @since  1.0.0
-	 *
-	 * @param  string $value  The value.
-	 * @return string The color.
+	 * @return void
 	 */
+
 	private function color( $value ) {
 
 		if ( 0 === strpos( $value, '+' ) ) {
@@ -175,5 +208,5 @@ class EDD_Customers_Widget {
 	}
 
 }
-$widget = new EDD_Customers_Widget();
+$widget = new EDD_Customers_Widget;
 unset( $widget );
