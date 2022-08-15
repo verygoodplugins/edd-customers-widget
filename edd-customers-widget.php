@@ -213,5 +213,5 @@ class EDD_Customers_Widget {
 	}
 
 }
-$widget = new EDD_Customers_Widget;
-unset( $widget );
+
+new EDD_Customers_Widget;
