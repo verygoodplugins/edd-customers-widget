@@ -39,6 +39,11 @@ class EDD_Customers_Widget {
 	 */
 	public function widget() {
 
+		if ( ! function_exists( 'edd_get_customers' ) ) {
+            echo '<p>' . esc_html__( 'The EDD Customers Widget requires EDD 3.0 or higher.' ) . '</p>';
+            return;
+		}
+
 		$data = get_transient( 'edd_customers_stats' );
 
 		// No transient.
@@ -51,7 +56,7 @@ class EDD_Customers_Widget {
 				),
 			);
 
-			$this_year_customers = new EDD_Customer_Query( $args );
+			$this_year_customers = edd_get_customers( $args );
 
 			$args = array(
 				'number'     => -1,
@@ -70,9 +75,9 @@ class EDD_Customers_Widget {
 				),
 			);
 
-			$last_year_customers = new EDD_Customer_Query( $args );
+			$last_year_customers = edd_get_customers( $args );
 
-			$yoy_change = ( count( $this_year_customers->items ) - count( $last_year_customers->items ) ) / count( $last_year_customers->items ) * 100;
+			$yoy_change = ( count( $this_year_customers ) - count( $last_year_customers ) ) / count( $last_year_customers ) * 100;
 
 			$yoy_change = round( $yoy_change, 1 );
 
@@ -88,7 +93,7 @@ class EDD_Customers_Widget {
 				),
 			);
 
-			$this_month_customers = new EDD_Customer_Query( $args );
+			$this_month_customers = edd_get_customers( $args );
 
 			$args = array(
 				'number'     => -1,
@@ -107,9 +112,9 @@ class EDD_Customers_Widget {
 				),
 			);
 
-			$last_month_customers = new EDD_Customer_Query( $args );
+			$last_month_customers = edd_get_customers( $args );
 
-			$mtd_change = ( count( $this_month_customers->items ) - count( $last_month_customers->items ) ) / count( $last_month_customers->items ) * 100;
+			$mtd_change = ( count( $this_month_customers ) - count( $last_month_customers ) ) / count( $last_month_customers ) * 100;
 
 			$mtd_change = round( $mtd_change, 1 );
 
@@ -134,9 +139,9 @@ class EDD_Customers_Widget {
 				),
 			);
 
-			$this_month_last_year_customers = new EDD_Customer_Query( $args );
+			$this_month_last_year_customers = edd_get_customers( $args );
 
-			$mtdyoy_change = ( count( $this_month_customers->items ) - count( $this_month_last_year_customers->items ) ) / count( $this_month_last_year_customers->items ) * 100;
+			$mtdyoy_change = ( count( $this_month_customers ) - count( $this_month_last_year_customers ) ) / count( $this_month_last_year_customers ) * 100;
 
 			$mtdyoy_change = round( $mtdyoy_change, 1 );
 
@@ -145,8 +150,8 @@ class EDD_Customers_Widget {
 			}
 
 			$data = array(
-				'ytd'           => count( $this_year_customers->items ),
-				'mtd'           => count( $this_month_customers->items ),
+				'ytd'           => count( $this_year_customers ),
+				'mtd'           => count( $this_month_customers ),
 				'yoy_change'    => $yoy_change,
 				'mtd_change'    => $mtd_change,
 				'mtdyoy_change' => $mtdyoy_change,
@@ -157,36 +162,36 @@ class EDD_Customers_Widget {
 		}
 
 		?>
-		<div class="table table_left table_current_month">
-			<table>
-				<thead>
-					<tr>
-						<td colspan="2"><?php _e( 'New Customers' ) ?></td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td class="first t"><?php _e( 'This Year' ); ?></td>
-						<td class="b" style="white-space: nowrap;">
-							<?php echo $data['ytd'] ?>  <small style="color: <?php echo $this->color( $data['yoy_change'] ); ?>">( <?php echo $data['yoy_change']; ?>% )</small>
-						</td>
-					</tr>
-					<tr>
-						<td class="first t"><?php _e( 'This Month (mtd)' ); ?></td>
-						<td class="b" style="white-space: nowrap;">
-							<?php echo $data['mtd']; ?> <small style="color: <?php echo $this->color( $data['mtd_change'] ); ?>">( <?php echo $data['mtd_change']; ?>% )</small>
-						</td>
-					</tr>
-					<tr>
-						<td class="first t"><?php _e( 'This Month (yoy)' ); ?></td>
-						<td class="b" style="white-space: nowrap;">
-							<?php echo $data['mtd']; ?> <small style="color: <?php echo $this->color( $data['mtdyoy_change'] ); ?>">( <?php echo $data['mtdyoy_change']; ?>% )</small>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-		<div style="clear: both"></div>
+        <div class="table table_left table_current_month">
+            <table>
+                <thead>
+                <tr>
+                    <td colspan="2"><?php _e( 'New Customers' ) ?></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="first t"><?php _e( 'This Year' ); ?></td>
+                    <td class="b" style="white-space: nowrap;">
+						<?php echo $data['ytd'] ?>  <small style="color: <?php echo $this->color( $data['yoy_change'] ); ?>">( <?php echo $data['yoy_change']; ?>% )</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="first t"><?php _e( 'This Month (mtd)' ); ?></td>
+                    <td class="b" style="white-space: nowrap;">
+						<?php echo $data['mtd']; ?> <small style="color: <?php echo $this->color( $data['mtd_change'] ); ?>">( <?php echo $data['mtd_change']; ?>% )</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="first t"><?php _e( 'This Month (yoy)' ); ?></td>
+                    <td class="b" style="white-space: nowrap;">
+						<?php echo $data['mtd']; ?> <small style="color: <?php echo $this->color( $data['mtdyoy_change'] ); ?>">( <?php echo $data['mtdyoy_change']; ?>% )</small>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="clear: both"></div>
 		<?php
 	}
 
@@ -208,5 +213,5 @@ class EDD_Customers_Widget {
 	}
 
 }
-$widget = new EDD_Customers_Widget;
-unset( $widget );
+
+new EDD_Customers_Widget;
