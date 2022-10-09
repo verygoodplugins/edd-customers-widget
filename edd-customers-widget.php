@@ -4,7 +4,7 @@
  * Plugin Name: EDD Customers Widget
  * Description: Show new customers for the period on the EDD summary widget.
  * Plugin URI: https://verygoodplugins.com/
- * Version: 1.1
+ * Version: 1.1.1
  * Author: Very Good Plugins
  * Author URI: https://verygoodplugins.com/
 */
@@ -45,7 +45,8 @@ class EDD_Customers_Widget {
 		if ( false === $data ) {
 
 			$args = array(
-				'number'     => -1,
+				'number'     => 9999999,
+				'count'      => true,
 				'date_query' => array(
 					'year'   => date( 'Y' )
 				),
@@ -54,7 +55,8 @@ class EDD_Customers_Widget {
 			$this_year_customers = new EDD_Customer_Query( $args );
 
 			$args = array(
-				'number'     => -1,
+				'number'     => 9999999,
+				'count'      => true,
 				'date_query' => array(
 					'inclusive' => true,
 					'after'     => array(
@@ -72,16 +74,22 @@ class EDD_Customers_Widget {
 
 			$last_year_customers = new EDD_Customer_Query( $args );
 
-			$yoy_change = ( count( $this_year_customers->items ) - count( $last_year_customers->items ) ) / count( $last_year_customers->items ) * 100;
+			if ( ! empty( $last_year_customers->items ) ) {
 
-			$yoy_change = round( $yoy_change, 1 );
+				$yoy_change = ( $this_year_customers->items - $last_year_customers->items ) / $last_year_customers->items * 100;
 
-			if ( 0 < $yoy_change ) {
-				$yoy_change = '+' . $yoy_change;
+				$yoy_change = round( $yoy_change, 1 );
+
+				if ( 0 < $yoy_change ) {
+					$yoy_change = '+' . $yoy_change;
+				}
+			} else {
+				$yoy_change = '+∞';
 			}
 
 			$args = array(
-				'number'     => -1,
+				'number'     => 9999999,
+				'count'      => true,
 				'date_query' => array(
 					'year'  => date( 'Y' ),
 					'month' => date( 'n' ),
@@ -91,7 +99,8 @@ class EDD_Customers_Widget {
 			$this_month_customers = new EDD_Customer_Query( $args );
 
 			$args = array(
-				'number'     => -1,
+				'number'     => 9999999,
+				'count'      => true,
 				'date_query' => array(
 					'inclusive' => true,
 					'after'     => array(
@@ -109,16 +118,23 @@ class EDD_Customers_Widget {
 
 			$last_month_customers = new EDD_Customer_Query( $args );
 
-			$mtd_change = ( count( $this_month_customers->items ) - count( $last_month_customers->items ) ) / count( $last_month_customers->items ) * 100;
+			if ( ! empty( $last_month_customers->items ) ) {
 
-			$mtd_change = round( $mtd_change, 1 );
+				$mtd_change = ( $this_month_customers->items - $last_month_customers->items ) / $last_month_customers->items * 100;
 
-			if ( 0 < $mtd_change ) {
-				$mtd_change = '+' . $mtd_change;
+				$mtd_change = round( $mtd_change, 1 );
+
+				if ( 0 < $mtd_change ) {
+					$mtd_change = '+' . $mtd_change;
+				}
+
+			} else {
+				$mtd_change = '+∞';
 			}
 
 			$args = array(
-				'number'     => -1,
+				'number'     => 9999999,
+				'count'      => true,
 				'date_query' => array(
 					'inclusive' => true,
 					'after'     => array(
@@ -136,17 +152,22 @@ class EDD_Customers_Widget {
 
 			$this_month_last_year_customers = new EDD_Customer_Query( $args );
 
-			$mtdyoy_change = ( count( $this_month_customers->items ) - count( $this_month_last_year_customers->items ) ) / count( $this_month_last_year_customers->items ) * 100;
+			if ( ! empty( $this_month_last_year_customers->items ) ) {
 
-			$mtdyoy_change = round( $mtdyoy_change, 1 );
+				$mtdyoy_change = ( $this_month_customers->items - $this_month_last_year_customers->items ) / $this_month_last_year_customers->items * 100;
 
-			if ( 0 < $mtdyoy_change ) {
-				$mtdyoy_change = '+' . $mtdyoy_change;
+				$mtdyoy_change = round( $mtdyoy_change, 1 );
+
+				if ( 0 < $mtdyoy_change ) {
+					$mtdyoy_change = '+' . $mtdyoy_change;
+				}
+			} else {
+				$mtdyoy_change = '+∞';
 			}
 
 			$data = array(
-				'ytd'           => count( $this_year_customers->items ),
-				'mtd'           => count( $this_month_customers->items ),
+				'ytd'           => $this_year_customers->items,
+				'mtd'           => $this_month_customers->items,
 				'yoy_change'    => $yoy_change,
 				'mtd_change'    => $mtd_change,
 				'mtdyoy_change' => $mtdyoy_change,
