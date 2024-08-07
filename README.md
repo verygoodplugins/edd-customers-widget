@@ -6,7 +6,7 @@
 
 Displays new customers year to date and month to date in the Easy Digital Downloads Sales Summary widget, as well as manual license renewals.
 
-<img src="https://wpfusion.com/files/edd-customers-screenshot.jpeg" width="479" alt="Customers Widget Screenshot" />
+<img src="https://wpfusion.com/files/edd-customers-screenshot-new.jpeg" width="410" alt="Customers Widget Screenshot" />
 
 ## Installation
 
