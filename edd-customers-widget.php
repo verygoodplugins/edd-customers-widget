@@ -2,9 +2,9 @@
 
 /*
  * Plugin Name: EDD Customers Widget
- * Description: Show new customers for the period on the EDD summary widget.
- * Plugin URI: https://verygoodplugins.com/
- * Version: 1.1.1
+ * Description: Show new customers and manual license renewals for the period on the EDD summary widget.
+ * Plugin URI: https://github.com/verygoodplugins/edd-customers-widget
+ * Version: 1.2.0
  * Author: Very Good Plugins
  * Author URI: https://verygoodplugins.com/
 */
