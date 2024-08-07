@@ -165,12 +165,53 @@ class EDD_Customers_Widget {
 				$mtdyoy_change = '+∞';
 			}
 
+			// Manual renewals data.
+
+			$args = array(
+				'status'     => 'publish',
+				'meta_query' => array(
+					array(
+						'key'     => '_edd_sl_is_renewal',
+						'value'   => '1',
+						'compare' => '=',
+					),
+					array(
+						'key'     => 'subscription_id',
+						'compare' => 'NOT EXISTS',
+					),
+				),
+				'date_query'  => array(
+					'inclusive' => true,
+				),
+				'year'        => gmdate( 'Y' ),
+			);
+
+			$payments = edd_get_payments( $args );
+
+			$total_revenue_year = 0;
+
+			foreach ( $payments as $payment ) {
+				$total_revenue_year += edd_get_payment_amount( $payment->ID );
+			}
+
+			$args['month'] = gmdate( 'n' );
+
+			$payments = edd_get_payments( $args );
+
+			$total_revenue_month = 0;
+
+			foreach ( $payments as $payment ) {
+				$total_revenue_month += edd_get_payment_amount( $payment->ID );
+			}
+
 			$data = array(
 				'ytd'           => $this_year_customers->items,
 				'mtd'           => $this_month_customers->items,
 				'yoy_change'    => $yoy_change,
 				'mtd_change'    => $mtd_change,
 				'mtdyoy_change' => $mtdyoy_change,
+				'renewals_ytd'  => $total_revenue_year,
+				'renewals_mtd'  => $total_revenue_month,
 			);
 
 			set_transient( 'edd_customers_stats', $data, HOUR_IN_SECONDS );
@@ -207,7 +248,32 @@ class EDD_Customers_Widget {
 				</tbody>
 			</table>
 		</div>
+
+		<div class="table table_right table_current_month">
+			<table>
+				<thead>
+					<tr>
+						<td colspan="2"><?php _e( 'Manual License Renewals' ) ?></td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="first t"><?php _e( 'This Year' ); ?></td>
+						<td class="b" style="white-space: nowrap;">
+							<?php echo edd_currency_filter( edd_format_amount( $data['renewals_ytd'] ) ); ?>  
+						</td>
+					</tr>
+					<tr>
+						<td class="first t"><?php _e( 'This Month' ); ?></td>
+						<td class="b" style="white-space: nowrap;">
+						<?php echo edd_currency_filter( edd_format_amount( $data['renewals_mtd'] ) ); ?>  
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 		<div style="clear: both"></div>
+
 		<?php
 	}
 
